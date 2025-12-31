@@ -1,147 +1,230 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>محول الليرة السورية الذكي</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>  |عشتار | المحول الذكي | الليرة السورية</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 
     <style>
-        :root {
-            --primary-green: #2e7d32;
-            --light-green: #e8f5e9;
-            --accent-green: #66bb6a;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --text-dark: #1b3a24;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: 'Tajawal', Tahoma, Arial, sans-serif;
-            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
+            font-family: 'Tajawal', sans-serif;
+            /* خلفية خضراء متدرجة ناعمة */
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            direction: rtl;
-            margin: 0;
             padding: 20px;
         }
 
-        .glass-box {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
+        /* الصندوق الزجاجي (Glassmorphism) */
+        .main-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            padding: 35px 25px;
             width: 100%;
             max-width: 400px;
-            padding: 30px 25px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(31, 135, 79, 0.15);
-            border: 1px solid rgba(255,255,255,0.6);
             text-align: center;
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.1);
         }
 
-        h1 { font-size: 24px; color: var(--primary-green); margin-bottom: 5px; }
+        h1 { color: #2e7d32; font-size: 24px; margin-bottom: 10px; }
+        p.subtitle { color: #558b63; font-size: 14px; margin-bottom: 25px; }
 
-        .input-group { position: relative; margin-bottom: 10px; display: flex; align-items: center; }
+        .input-area { position: relative; margin-bottom: 15px; }
 
-        input[type="text"], select {
+        input[type="text"] {
             width: 100%;
-            padding: 15px;
-            padding-left: 50px;
+            padding: 18px 15px 18px 55px; /* مسافة لزر الكاميرا على اليسار */
             font-size: 18px;
-            border-radius: 12px;
-            border: 2px solid transparent;
-            background: #fff;
-            color: var(--text-dark);
+            border-radius: 15px;
+            border: 2px solid #fff;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1b3a24;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             font-family: inherit;
         }
 
-        .scan-btn {
+        input:focus { outline: none; border-color: #66bb6a; box-shadow: 0 4px 15px rgba(102, 187, 106, 0.2); }
+
+        .btn-scan {
             position: absolute;
-            left: 5px;
+            left: 10px;
             top: 50%;
             transform: translateY(-50%);
-            background: var(--light-green);
-            color: var(--primary-green);
+            background: #e8f5e9;
+            color: #2e7d32;
             border: none;
             width: 40px;
             height: 40px;
-            border-radius: 10px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-scan:hover { background: #2e7d32; color: #fff; }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            background: #fff;
+            margin-bottom: 20px;
+            font-family: inherit;
             cursor: pointer;
         }
 
-        .result { font-size: 28px; font-weight: 800; color: var(--primary-green); margin-top: 10px; }
-        
-        .interpreted-value { font-size: 12px; color: #666; height: 18px; margin-bottom: 10px; }
+        .result-box {
+            background: rgba(46, 125, 50, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 10px;
+        }
 
-        footer { margin-top: 25px; font-size: 12px; color: var(--primary-green); }
-        .designer-name { font-weight: bold; color: var(--accent-green); }
+        #resultValue {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2e7d32;
+            display: block;
+        }
+
+        .interpreted { font-size: 12px; color: #777; margin-top: 5px; height: 15px; }
+
+        footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #2e7d32;
+            border-top: 1px solid rgba(46, 125, 50, 0.1);
+            padding-top: 15px;
+        }
+
+        .brand { font-weight: bold; color: #1b5e20; }
+
+        /* أنيميشن بسيط عند التغيير */
+        .pop { animation: popAnim 0.3s ease; }
+        @keyframes popAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
 
-<div class="glass-box">
-    <h1><i class="fas fa-coins"></i> محول الليرة الذكي</h1>
-    <div style="font-size:13px; color:#558b63; margin-bottom:20px;">يدعم الكتابة الذكية والمسح الضوئي</div>
+<div class="main-card">
+    <h1><i class="fas fa-leaf"></i> محول العملة</h1>
+    <p class="subtitle">اكتب الرقم (أو كلمات) للتحويل الفوري</p>
 
-    <div class="input-group">
-        <input type="text" id="amount" placeholder="أدخل الرقم أو اكتبه نصاً..." autocomplete="off">
-        <button class="scan-btn" onclick="document.getElementById('fileInput').click()">
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="مثال: مئة وخمسون ألف" autocomplete="off">
+        <button class="btn-scan" onclick="document.getElementById('fileIn').click()" title="مسح من صورة">
             <i class="fas fa-camera"></i>
         </button>
-        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageScan(event)">
+        <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="scanImage(event)">
     </div>
 
-    <div class="interpreted-value" id="interpretedText"></div>
+    <div class="interpreted" id="hint"></div>
 
-    <select id="type" onchange="convert()">
-        <option value="oldToNew">▼ من قديم إلى حديث (حذف صفرين)</option>
-        <option value="newToOld">▲ من حديث إلى قديم (إضافة صفرين)</option>
+    <select id="mode" onchange="doCalc()">
+        <option value="toNew">من قديم إلى حديث (حذف 00)</option>
+        <option value="toOld">من حديث إلى قديم (إضافة 00)</option>
     </select>
 
-    <div style="margin:20px auto; width:60px; height:6px; background:var(--accent-green); border-radius:10px; opacity:0.3;"></div>
-
-    <div class="result" id="result">0 ل.س</div>
+    <div class="result-box">
+        <span id="resultValue">0</span>
+        <small style="color: #558b63;">ليرة سورية</small>
+    </div>
 
     <footer>
-        © 2025 Syrian Currency Converter <br>
-        تصميم وتطوير: <span class="designer-name">عشتار</span>
+        تم التصميم والتطوير بواسطة <span class="brand">عشتار</span> &copy; 2025
     </footer>
 </div>
 
 <script>
-    const wordMap = {'واحد':1,'اثنان':2,'ثلاثة':3,'اربعة':4,'خمسة':5,'ستة':6,'سبعة':7,'ثمانية':8,'تسعة':9,'عشرة':10,'عشرين':20,'ثلاثين':30,'اربعين':40,'خمسين':50,'مئة':100,'ألف':1000,'مليون':1000000};
-    
-    function parseArabic(text) {
-        if (!isNaN(text.replace(/,/g,''))) return parseFloat(text.replace(/,/g,''));
-        let total = 0, current = 0;
-        text.split(/\s+/).forEach(w => {
-            let val = wordMap[w.replace(/(ال|و)/g,"")] || wordMap[w];
-            if(val) current += val;
-            if(w.includes('ألف') || w.includes('الف')) { total += (current||1)*1000; current=0; }
+    // قاموس بسيط للكلمات العربية
+    const words = {
+        'واحد':1, 'اثنان':2, 'اثنين':2, 'ثلاثة':3, 'اربعة':4, 'أربعة':4, 'خمسة':5, 'ستة':6, 'سبعة':7, 'ثمانية':8, 'تسعة':9, 'عشرة':10,
+        'عشرين':20, 'ثلاثين':30, 'اربعين':40, 'خمسين':50, 'ستين':60, 'سبعين':70, 'ثمانين':80, 'تسعين':90,
+        'مئة':100, 'مائة':100, 'مئتين':200, 'ألف':1000, 'الف':1000, 'آلاف':1000, 'مليون':1000000, 'نصف':0.5
+    };
+
+    function textToNumber(str) {
+        if (!isNaN(str.replace(/,/g,'')) && str.trim() !== "") return parseFloat(str.replace(/,/g,''));
+        
+        let total = 0, temp = 0;
+        let parts = str.replace(/و/g, " ").split(/\s+/);
+
+        parts.forEach(p => {
+            let n = words[p] || words[p.replace('ة','ه')];
+            if (n) {
+                if (n >= 1000) {
+                    total += (temp || 1) * n;
+                    temp = 0;
+                } else {
+                    temp += n;
+                }
+            } else if (!isNaN(p)) {
+                temp += parseFloat(p);
+            }
         });
-        return total + current;
+        return total + temp;
     }
 
-    function convert() {
-        let val = parseArabic(document.getElementById("amount").value);
-        let type = document.getElementById("type").value;
-        let res = (type === "oldToNew") ? val/100 : val*100;
-        document.getElementById("result").innerHTML = res.toLocaleString() + " <small>ل.س</small>";
-        if(navigator.vibrate) navigator.vibrate(20);
+    function doCalc() {
+        const input = document.getElementById('userInput').value;
+        const mode = document.getElementById('mode').value;
+        const resElem = document.getElementById('resultValue');
+        const hintElem = document.getElementById('hint');
+        
+        let num = textToNumber(input);
+
+        if (input && num > 0) {
+            hintElem.innerText = isNaN(input) ? "القيمة التقريبية: " + num.toLocaleString() : "";
+            let final = (mode === 'toNew') ? num / 100 : num * 100;
+            resElem.innerText = final.toLocaleString();
+            
+            // إضافة حركة واهتزاز
+            resElem.parentElement.classList.remove('pop');
+            void resElem.offsetWidth;
+            resElem.parentElement.classList.add('pop');
+            if(navigator.vibrate) navigator.vibrate(15);
+        } else {
+            resElem.innerText = "0";
+            hintElem.innerText = "";
+        }
     }
 
-    document.getElementById("amount").addEventListener("input", convert);
+    document.getElementById('userInput').addEventListener('input', doCalc);
 
-    function handleImageScan(event) {
+    function scanImage(event) {
         const file = event.target.files[0];
-        Tesseract.recognize(file, 'eng').then(({data:{text}}) => {
-            const m = text.match(/(\d+)/);
-            if(m) { document.getElementById("amount").value = m[0]; convert(); }
+        if(!file) return;
+        const btn = document.querySelector('.btn-scan');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        
+        Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
+            const num = text.match(/\d+/);
+            if(num) {
+                document.getElementById('userInput').value = num[0];
+                doCalc();
+            }
+        }).finally(() => {
+            btn.innerHTML = '<i class="fas fa-camera"></i>';
         });
     }
 </script>
+
 </body>
 </html>
