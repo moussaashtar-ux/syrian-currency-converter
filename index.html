@@ -2,28 +2,24 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>محول الليرة السورية الذكي | حذف صفرين</title>
-    <meta name="description" content="محول الليرة السورية الذكي. حوّل بين العملة القديمة والحديثة عبر حذف صفرين. يدعم المسح الضوئي للأرقام.">
+    <title>محول الليرة السورية الذكي</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 
     <style>
         :root {
-            --primary-green: #2e7d32; /* أخضر غامق */
-            --light-green: #e8f5e9;  /* أخضر فاتح جداً للخلفيات */
-            --accent-green: #66bb6a; /* أخضر متوسط للتفاعل */
-            --glass-bg: rgba(255, 255, 255, 0.75); /* لون الزجاج الشفاف */
-            --glass-border: rgba(255, 255, 255, 0.4);
+            --primary-green: #2e7d32;
+            --light-green: #e8f5e9;
+            --accent-green: #66bb6a;
+            --glass-bg: rgba(255, 255, 255, 0.85);
             --text-dark: #1b3a24;
         }
 
         body {
             font-family: 'Tajawal', Tahoma, Arial, sans-serif;
-            /* خلفية متدرجة خضراء هادئة */
             background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
             display: flex;
             justify-content: center;
@@ -32,70 +28,36 @@
             direction: rtl;
             margin: 0;
             padding: 20px;
-            color: var(--text-dark);
         }
 
-        /* تصميم الصندوق الزجاجي */
         .glass-box {
             background: var(--glass-bg);
-            backdrop-filter: blur(15px); /* تأثير الضبابية خلف الزجاج */
-            -webkit-backdrop-filter: blur(15px);
+            backdrop-filter: blur(20px);
             width: 100%;
             max-width: 400px;
             padding: 30px 25px;
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(31, 135, 79, 0.15); /* ظل أخضر خفيف */
-            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 40px rgba(31, 135, 79, 0.15);
+            border: 1px solid rgba(255,255,255,0.6);
             text-align: center;
-            transition: transform 0.3s ease;
         }
 
-        h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-green);
-            margin-bottom: 8px;
-        }
+        h1 { font-size: 24px; color: var(--primary-green); margin-bottom: 5px; }
 
-        .desc {
-            font-size: 14px;
-            color: #558b63;
-            margin-bottom: 25px;
-        }
+        .input-group { position: relative; margin-bottom: 10px; display: flex; align-items: center; }
 
-        /* حاوية الإدخال وزر الكاميرا */
-        .input-group {
-            position: relative;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* تنسيق حقول الإدخال */
-        input, select {
+        input[type="text"], select {
             width: 100%;
             padding: 15px;
+            padding-left: 50px;
             font-size: 18px;
             border-radius: 12px;
             border: 2px solid transparent;
-            background: rgba(255, 255, 255, 0.9);
+            background: #fff;
             color: var(--text-dark);
             font-family: inherit;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-green);
-            box-shadow: 0 4px 15px rgba(102, 187, 106, 0.2);
-        }
-
-        input#amount {
-            padding-left: 50px; /* مكان لزر الكاميرا */
-        }
-
-        /* زر الكاميرا للمسح الذكي */
         .scan-btn {
             position: absolute;
             left: 5px;
@@ -108,237 +70,78 @@
             height: 40px;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
         }
 
-        .scan-btn:hover {
-            background: var(--accent-green);
-            color: white;
-        }
+        .result { font-size: 28px; font-weight: 800; color: var(--primary-green); margin-top: 10px; }
         
-        .scan-btn.loading i {
-             animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+        .interpreted-value { font-size: 12px; color: #666; height: 18px; margin-bottom: 10px; }
 
-        /* عنصر زخرفي متموج */
-        .divider-wave {
-            margin: 20px auto;
-            width: 60px;
-            height: 6px;
-            background-color: var(--accent-green);
-            border-radius: 10px;
-            opacity: 0.5;
-        }
-
-        /* منطقة النتيجة */
-        .result-container {
-             min-height: 60px;
-             display: flex;
-             align-items: center;
-             justify-content: center;
-        }
-
-        .result {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--primary-green);
-            text-shadow: 0 2px 4px rgba(46, 125, 50, 0.1);
-        }
-        
-        /* أنيميشن للنتيجة عند التحديث */
-        .result.pop-anim {
-            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes pop {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .warning {
-            margin-top: 20px;
-            font-size: 12px;
-            color: #7e9c87;
-            background: rgba(46, 125, 50, 0.05);
-            padding: 8px;
-            border-radius: 8px;
-        }
-
-        footer {
-            margin-top: 25px;
-            font-size: 12px;
-            color: var(--primary-green);
-            font-weight: 500;
-        }
-        
-        .designer-name {
-             color: var(--accent-green);
-             font-weight: bold;
-        }
-
-        /* إخفاء input الملفات */
-        #fileInput {
-            display: none;
-        }
+        footer { margin-top: 25px; font-size: 12px; color: var(--primary-green); }
+        .designer-name { font-weight: bold; color: var(--accent-green); }
     </style>
 </head>
 <body>
 
 <div class="glass-box">
-    <h1><i class="fas fa-money-bill-wave"></i> محول الليرة الذكي</h1>
-    <div class="desc">التحويل بين القديم والحديث (حذف صفرين)</div>
+    <h1><i class="fas fa-coins"></i> محول الليرة الذكي</h1>
+    <div style="font-size:13px; color:#558b63; margin-bottom:20px;">يدعم الكتابة الذكية والمسح الضوئي</div>
 
     <div class="input-group">
-        <input type="number" id="amount" placeholder="أدخل المبلغ هنا..." inputmode="numeric">
-        <button class="scan-btn" id="scanBtn" onclick="triggerFileSelect()" title="مسح ذكي للأرقام من صورة">
+        <input type="text" id="amount" placeholder="أدخل الرقم أو اكتبه نصاً..." autocomplete="off">
+        <button class="scan-btn" onclick="document.getElementById('fileInput').click()">
             <i class="fas fa-camera"></i>
         </button>
-        <input type="file" id="fileInput" accept="image/*" onchange="handleImageScan(event)">
+        <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageScan(event)">
     </div>
 
-    <select id="type" onchange="convertAndVibrate()">
-        <option value="oldToNew">▼ من قديم إلى حديث (حذف 00)</option>
-        <option value="newToOld">▲ من حديث إلى قديم (إضافة 00)</option>
+    <div class="interpreted-value" id="interpretedText"></div>
+
+    <select id="type" onchange="convert()">
+        <option value="oldToNew">▼ من قديم إلى حديث (حذف صفرين)</option>
+        <option value="newToOld">▲ من حديث إلى قديم (إضافة صفرين)</option>
     </select>
 
-    <div class="divider-wave"></div>
+    <div style="margin:20px auto; width:60px; height:6px; background:var(--accent-green); border-radius:10px; opacity:0.3;"></div>
 
-    <div class="result-container">
-        <div class="result" id="result">0 ل.س</div>
-    </div>
-
-    <div class="warning">
-        <i class="fas fa-info-circle"></i> هذا التحويل حسابي فقط ولا يمثل سعر صرف رسمي.
-    </div>
+    <div class="result" id="result">0 ل.س</div>
 
     <footer>
         © 2025 Syrian Currency Converter <br>
-        تصميم وتطوير: <span class="designer-name">محمد</span>
+        تصميم وتطوير: <span class="designer-name">عشتار</span>
     </footer>
 </div>
 
 <script>
-    // دالة الاهتزاز (Haptics)
-    function vibrateDevice() {
-        // التحقق مما إذا كان المتصفح يدعم الاهتزاز
-        if (navigator.vibrate) {
-            navigator.vibrate(30); // اهتزاز خفيف لمدة 30 ميلي ثانية
-        }
+    const wordMap = {'واحد':1,'اثنان':2,'ثلاثة':3,'اربعة':4,'خمسة':5,'ستة':6,'سبعة':7,'ثمانية':8,'تسعة':9,'عشرة':10,'عشرين':20,'ثلاثين':30,'اربعين':40,'خمسين':50,'مئة':100,'ألف':1000,'مليون':1000000};
+    
+    function parseArabic(text) {
+        if (!isNaN(text.replace(/,/g,''))) return parseFloat(text.replace(/,/g,''));
+        let total = 0, current = 0;
+        text.split(/\s+/).forEach(w => {
+            let val = wordMap[w.replace(/(ال|و)/g,"")] || wordMap[w];
+            if(val) current += val;
+            if(w.includes('ألف') || w.includes('الف')) { total += (current||1)*1000; current=0; }
+        });
+        return total + current;
     }
 
-    // تنسيق الأرقام بفواصل
-    function format(num) {
-        return Number(num).toLocaleString("en-US", {maximumFractionDigits: 2});
-    }
-
-    // دالة التحويل الأساسية
     function convert() {
-        let amountInput = document.getElementById("amount");
-        let amount = amountInput.value;
+        let val = parseArabic(document.getElementById("amount").value);
         let type = document.getElementById("type").value;
-        let resultBox = document.getElementById("result");
-
-        // إزالة كلاس الأنيميشن لإعادة تفعيله لاحقاً
-        resultBox.classList.remove("pop-anim");
-
-        if (amount === "" || amount < 0) {
-            resultBox.innerHTML = "0 ل.س";
-            return;
-        }
-
-        let result;
-        if (type === "oldToNew") {
-            result = amount / 100;
-        } else {
-            result = amount * 100;
-        }
-        
-        // تحديث النص وإضافة الأنيميشن
-        resultBox.innerHTML = format(result) + " <small>ل.س</small>";
-        // خدعة بسيطة لإعادة تشغيل الأنيميشن
-        void resultBox.offsetWidth; 
-        resultBox.classList.add("pop-anim");
+        let res = (type === "oldToNew") ? val/100 : val*100;
+        document.getElementById("result").innerHTML = res.toLocaleString() + " <small>ل.س</small>";
+        if(navigator.vibrate) navigator.vibrate(20);
     }
 
-    // دالة مجمعة للتحويل والاهتزاز
-    function convertAndVibrate() {
-        convert();
-        // اهتزاز فقط إذا كان هناك رقم
-        if(document.getElementById("amount").value > 0) {
-             vibrateDevice();
-        }
-    }
+    document.getElementById("amount").addEventListener("input", convert);
 
-    // الاستماع للكتابة في الحقل
-    document.getElementById("amount").addEventListener("input", convertAndVibrate);
-
-
-    // --- وظائف المسح الذكي (OCR) ---
-
-    // فتح نافذة اختيار الملف
-    function triggerFileSelect() {
-        document.getElementById('fileInput').click();
-    }
-
-    // معالجة الصورة المختارة
     function handleImageScan(event) {
         const file = event.target.files[0];
-        if (!file) return;
-
-        const scanBtn = document.getElementById('scanBtn');
-        const amountInput = document.getElementById('amount');
-        
-        // تغيير أيقونة الزر لحالة التحميل
-        scanBtn.classList.add('loading');
-        scanBtn.innerHTML = '<i class="fas fa-spinner"></i>';
-        amountInput.placeholder = "جاري مسح الصورة...";
-
-        // استخدام مكتبة Tesseract
-        Tesseract.recognize(
-            file,
-            'eng', // استخدام الإنجليزية لأن الأرقام غالباً تكون لاتينية (0-9)
-            { logger: m => console.log(m) } // لمراقبة التقدم في الكونسول
-        ).then(({ data: { text } }) => {
-            console.log("النص المستخرج:", text);
-            
-            // استخدام تعبير نمطي (Regex) لاستخراج أول رقم صحيح أو عشري من النص
-            // هذا يبحث عن أرقام متتالية، قد تحتوي على نقطة عشرية
-            const matches = text.match(/(\d+[\.,]?\d*)/);
-            
-            if (matches && matches[0]) {
-                // تنظيف الرقم من الفواصل غير العشرية إذا وجدت
-                let cleanedNumber = matches[0].replace(',', '.');
-                // تعيين الرقم في الحقل
-                amountInput.value = parseFloat(cleanedNumber);
-                // تشغيل التحويل والاهتزاز
-                convertAndVibrate();
-                // اهتزاز مزدوج للتأكيد على نجاح المسح
-                if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
-            } else {
-                alert("لم أتمكن من العثور على أرقام واضحة في الصورة. حاول مرة أخرى بصورة أوضح.");
-            }
-        }).catch(err => {
-            console.error(err);
-            alert("حدث خطأ أثناء معالجة الصورة.");
-        }).finally(() => {
-            // إعادة الزر لحالته الطبيعية
-            scanBtn.classList.remove('loading');
-            scanBtn.innerHTML = '<i class="fas fa-camera"></i>';
-            amountInput.placeholder = "أدخل المبلغ هنا...";
-            // تفريغ input الملف للسماح باختيار نفس الملف مجدداً
-            event.target.value = '';
+        Tesseract.recognize(file, 'eng').then(({data:{text}}) => {
+            const m = text.match(/(\d+)/);
+            if(m) { document.getElementById("amount").value = m[0]; convert(); }
         });
     }
-
-    // تشغيل التحويل الأولي عند تحميل الصفحة
-    convert();
 </script>
-
 </body>
 </html>
