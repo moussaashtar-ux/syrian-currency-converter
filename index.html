@@ -1,86 +1,112 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محول الليرة الذكي</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محول الليرة الذكي - النسخة النهائية</title>
 
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            height: 100vh;
-            display: flex; justify-content: center; align-items: center; padding: 20px;
-        }
-        .main-card {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 25px;
-            padding: 30px 20px;
-            width: 100%; max-width: 400px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-        }
-        h1 { color: #2e7d32; margin-bottom: 20px; font-size: 24px; }
-        
-        .input-area { position: relative; margin-bottom: 15px; }
-        input[type="number"] {
-            width: 100%;
-            padding: 18px 15px 18px 55px;
-            font-size: 20px;
-            border-radius: 15px;
-            border: 2px solid #fff;
-            background: #fff;
-            color: #1b3a24;
-            font-family: inherit;
-            outline: none;
-            transition: 0.3s;
-        }
-        input:focus { border-color: #66bb6a; }
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 
-        .btn-scan {
-            position: absolute; left: 10px; top: 50%;
-            transform: translateY(-50%);
-            background: #e8f5e9; color: #2e7d32;
-            border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-        }
+<style>
+* { box-sizing: border-box; margin:0; padding:0; }
+body {
+    font-family: 'Tajawal', sans-serif;
+    height: 100vh;
+    display: flex; justify-content: center; align-items: center; padding: 20px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    background-size: 400% 400%;
+    animation: bgAnimate 20s ease infinite;
+}
+@keyframes bgAnimate {
+    0%{background-position:0 0;}
+    50%{background-position:100% 100%;}
+    100%{background-position:0 0;}
+}
 
-        .result-box {
-            background: #fff; padding: 25px; border-radius: 15px;
-            margin: 20px 0; border: 1px solid #e8f5e9;
-        }
-        #resultValue { font-size: 35px; font-weight: bold; color: #2e7d32; display: block; }
+.main-card {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border-radius: 25px;
+    padding: 30px 20px;
+    width: 100%; max-width: 420px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(46,125,50,0.25);
+    border: 1px solid rgba(255,255,255,0.6);
+    transition: transform 0.3s ease;
+}
+.main-card:hover { transform: translateY(-5px); }
 
-        .speak-btn {
-            background: #2e7d32; color: white; border: none;
-            padding: 10px 20px; border-radius: 50px;
-            cursor: pointer; margin-top: 10px; font-size: 14px;
-            transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
-            font-family: inherit;
-        }
-        .speak-btn:hover { background: #1b5e20; transform: scale(1.05); }
+h1 { color: #2e7d32; margin-bottom: 20px; font-size: 26px; }
 
-        .social-links { margin-top: 20px; display: flex; justify-content: center; gap: 20px; }
-        .social-links a { color: #2e7d32; font-size: 24px; transition: 0.3s; text-decoration: none; }
-        .social-links a:hover { transform: translateY(-3px); color: #66bb6a; }
+.input-area { position: relative; margin-bottom: 15px; }
+input[type="number"] {
+    width: 100%;
+    padding: 18px 15px 18px 55px;
+    font-size: 20px;
+    border-radius: 15px;
+    border: 2px solid #fff;
+    background: #fff;
+    color: #1b3a24;
+    font-family: inherit;
+    outline: none;
+    transition: 0.3s;
+}
+input:focus { border-color: #66bb6a; box-shadow: 0 0 10px rgba(102,187,106,0.5); }
 
-        footer { 
-            margin-top: 20px; 
-            font-size: 13px; 
-            color: #2e7d32; 
-            padding-top: 15px; 
-            border-top: 1px solid rgba(0,0,0,0.05); 
-        }
-        .engineer { font-weight: bold; color: #1b5e20; }
-    </style>
+.btn-scan {
+    position: absolute; left: 10px; top: 50%;
+    transform: translateY(-50%);
+    border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.3s;
+}
+.btn-scan:hover { transform: scale(1.15); }
+
+.result-box {
+    background: #fff; padding: 25px; border-radius: 15px;
+    margin: 20px 0; border: 1px solid #e8f5e9;
+    transition: box-shadow 0.3s ease;
+}
+.result-box:hover { box-shadow: 0 12px 30px rgba(46,125,50,0.3); }
+
+#resultValue, #inputValue { font-size: 28px; font-weight: bold; color: #2e7d32; display: block; margin-bottom:5px; }
+
+.speak-btn, .copy-btn {
+    border:none; cursor:pointer; font-family:inherit; transition:0.3s;
+}
+.speak-btn {
+    background:#2e7d32; color:white; padding:10px 22px; border-radius:50px; display:inline-flex; align-items:center; gap:8px;
+    animation: colorChange 5s infinite alternate;
+}
+.copy-btn {
+    margin-top:5px; font-size:13px; padding:5px 10px; border-radius: 25px; background:#e8f5e9; color:#2e7d32;
+    animation: colorChange 6s infinite alternate-reverse;
+}
+
+@keyframes colorChange {
+    0% {background-color: #2e7d32; color: #fff;}
+    25% {background-color: #388e3c; color: #fff;}
+    50% {background-color: #43a047; color: #fff;}
+    75% {background-color: #66bb6a; color: #fff;}
+    100% {background-color: #81c784; color: #fff;}
+}
+
+.social-links { margin-top: 20px; display: flex; justify-content: center; gap: 20px; }
+.social-links a { color: #2e7d32; font-size: 26px; transition:0.3s; text-decoration: none; }
+.social-links a:hover { transform: translateY(-3px) scale(1.2); color: #66bb6a; }
+
+footer { 
+    margin-top: 20px; 
+    font-size: 13px; 
+    color: #2e7d32; 
+    padding-top: 15px; 
+    border-top: 1px solid rgba(0,0,0,0.05); 
+}
+.engineer { font-weight: bold; color: #1b5e20; }
+</style>
 </head>
 <body>
 
@@ -88,7 +114,7 @@
     <h1><i class="fas fa-money-bill-transfer"></i> محول الليرة الذكي</h1>
 
     <div class="input-area">
-        <input type="number" id="userInput" placeholder="أدخل المبلغ بالأرقام..." oninput="doCalc()">
+        <input type="number" id="userInput" placeholder="أدخل المبلغ بالأرقام..." oninput="doCalc()" inputmode="numeric">
         <button class="btn-scan" onclick="document.getElementById('fileIn').click()" title="مسح من صورة">
             <i class="fas fa-camera"></i>
         </button>
@@ -101,12 +127,15 @@
     </select>
 
     <div class="result-box">
+        <span id="inputValue">0</span>
+        <div style="font-size:12px; color:#558b63;">الرقم الذي أدخلته</div>
+
         <span id="resultValue">0</span>
-        <div style="font-size: 14px; color: #558b63; margin-bottom: 10px;">ليرة سورية</div>
+        <div style="font-size:12px; color:#558b63;">ليرة سورية</div>
         
-        <button class="speak-btn" onclick="speakResult()">
-            <i class="fas fa-volume-up"></i> اسمع النطق بالعربية
-        </button>
+        <button class="speak-btn" onclick="playClick(); speakResult()"><i class="fas fa-volume-up"></i> اسمع الرقم والناتج</button>
+        <button class="copy-btn" onclick="playClick(); copyResult()">نسخ النتيجة</button>
+        <button class="copy-btn" onclick="playClick(); reverseCalc()">↔ تحويل عكسي</button>
     </div>
 
     <div class="social-links">
@@ -123,51 +152,73 @@
     </footer>
 </div>
 
+<audio id="clickSound" src="https://freesound.org/data/previews/522/522546_10226500-lq.mp3"></audio>
+
 <script>
-    let currentResult = 0;
+let currentResult = 0;
 
-    function doCalc() {
-        const input = document.getElementById('userInput').value;
-        const mode = document.getElementById('mode').value;
-        const resElem = document.getElementById('resultValue');
-        
-        if (input && input > 0) {
-            currentResult = (mode === 'toNew') ? input / 100 : input * 100;
-            // عرض النتيجة بتنسيق الأرقام العربية
-            resElem.innerText = Number(currentResult).toLocaleString('ar-EG');
-            if(navigator.vibrate) navigator.vibrate(10);
-        } else {
-            resElem.innerText = "0";
-            currentResult = 0;
+function playClick() {
+    const audio = document.getElementById('clickSound');
+    audio.currentTime = 0;
+    audio.play();
+}
+
+function doCalc() {
+    const input = document.getElementById('userInput').value;
+    const mode = document.getElementById('mode').value;
+    const resElem = document.getElementById('resultValue');
+    const inElem = document.getElementById('inputValue');
+
+    if (input && input > 0) {
+        currentResult = (mode === 'toNew') ? input / 100 : input * 100;
+        resElem.innerText = Number(currentResult).toLocaleString('ar-EG');
+        inElem.innerText = Number(input).toLocaleString('ar-EG');
+        if(navigator.vibrate) navigator.vibrate(10);
+    } else {
+        resElem.innerText = "0";
+        inElem.innerText = "0";
+        currentResult = 0;
+    }
+}
+
+function speakResult() {
+    const input = document.getElementById('userInput').value || 0;
+    if(input == 0 && currentResult == 0) return;
+
+    const textToSpeak = `الرقم الذي أدخلته ${input}، والنتيجة ${currentResult} ليرة سورية`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    utterance.lang = 'ar-SA';
+    utterance.rate = 0.9;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+}
+
+function copyResult() {
+    navigator.clipboard.writeText(currentResult).then(() => alert("تم نسخ الرقم!"));
+}
+
+function reverseCalc() {
+    const mode = document.getElementById('mode');
+    mode.value = (mode.value === 'toNew') ? 'toOld' : 'toNew';
+    doCalc();
+}
+
+function scanImage(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    const btnIcon = document.querySelector('.btn-scan i');
+    btnIcon.className = "fas fa-spinner fa-spin";
+
+    Tesseract.recognize(file, 'ara').then(({ data: { text } }) => {
+        const num = text.replace(/[^\d]/g,'').match(/\d+/);
+        if(num) {
+            document.getElementById('userInput').value = num[0];
+            doCalc();
         }
-    }
-
-    function speakResult() {
-        if (currentResult === 0) return;
-        const textToSpeak = `${currentResult} ليرة سورية`;
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'ar-SA';
-        utterance.rate = 0.9;
-        window.speechSynthesis.cancel(); // إيقاف أي صوت سابق
-        window.speechSynthesis.speak(utterance);
-    }
-
-    function scanImage(event) {
-        const file = event.target.files[0];
-        if(!file) return;
-        const btnIcon = document.querySelector('.btn-scan i');
-        btnIcon.className = "fas fa-spinner fa-spin";
-        
-        Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
-            const num = text.match(/\d+/);
-            if(num) {
-                document.getElementById('userInput').value = num[0];
-                doCalc();
-            }
-        }).finally(() => {
-            btnIcon.className = "fas fa-camera";
-        });
-    }
+    }).finally(() => {
+        btnIcon.className = "fas fa-camera";
+    });
+}
 </script>
 
 </body>
