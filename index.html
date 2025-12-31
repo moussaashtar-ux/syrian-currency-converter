@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محول عشتار الذكي</title>
+    <title>محول الليرة الذكي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,13 +20,15 @@
         .main-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-radius: 25px;
             padding: 30px 20px;
             width: 100%; max-width: 400px;
             text-align: center;
             box-shadow: 0 15px 35px rgba(46, 125, 50, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
-        h1 { color: #2e7d32; margin-bottom: 20px; }
+        h1 { color: #2e7d32; margin-bottom: 20px; font-size: 24px; }
         
         .input-area { position: relative; margin-bottom: 15px; }
         input[type="number"] {
@@ -38,52 +40,64 @@
             background: #fff;
             color: #1b3a24;
             font-family: inherit;
+            outline: none;
+            transition: 0.3s;
         }
+        input:focus { border-color: #66bb6a; }
 
         .btn-scan {
             position: absolute; left: 10px; top: 50%;
             transform: translateY(-50%);
             background: #e8f5e9; color: #2e7d32;
             border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
         }
 
         .result-box {
             background: #fff; padding: 25px; border-radius: 15px;
             margin: 20px 0; border: 1px solid #e8f5e9;
-            position: relative;
         }
         #resultValue { font-size: 35px; font-weight: bold; color: #2e7d32; display: block; }
 
-        /* زر النطق */
         .speak-btn {
             background: #2e7d32; color: white; border: none;
             padding: 10px 20px; border-radius: 50px;
             cursor: pointer; margin-top: 10px; font-size: 14px;
             transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
+            font-family: inherit;
         }
         .speak-btn:hover { background: #1b5e20; transform: scale(1.05); }
 
         .social-links { margin-top: 20px; display: flex; justify-content: center; gap: 20px; }
-        .social-links a { color: #2e7d32; font-size: 24px; transition: 0.3s; }
-        footer { margin-top: 20px; font-size: 13px; color: #2e7d32; padding-top: 10px; border-top: 1px solid #ddd; }
+        .social-links a { color: #2e7d32; font-size: 24px; transition: 0.3s; text-decoration: none; }
+        .social-links a:hover { transform: translateY(-3px); color: #66bb6a; }
+
+        footer { 
+            margin-top: 20px; 
+            font-size: 13px; 
+            color: #2e7d32; 
+            padding-top: 15px; 
+            border-top: 1px solid rgba(0,0,0,0.05); 
+        }
+        .engineer { font-weight: bold; color: #1b5e20; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h1><i class="fas fa-leaf"></i> محول عشتار</h1>
+    <h1><i class="fas fa-money-bill-transfer"></i> محول الليرة الذكي</h1>
 
     <div class="input-area">
         <input type="number" id="userInput" placeholder="أدخل المبلغ بالأرقام..." oninput="doCalc()">
-        <button class="btn-scan" onclick="document.getElementById('fileIn').click()">
+        <button class="btn-scan" onclick="document.getElementById('fileIn').click()" title="مسح من صورة">
             <i class="fas fa-camera"></i>
         </button>
         <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="scanImage(event)">
     </div>
 
-    <select id="mode" onchange="doCalc()" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;">
-        <option value="toNew">من قديم إلى حديث (حذف 00)</option>
-        <option value="toOld">من حديث إلى قديم (إضافة 00)</option>
+    <select id="mode" onchange="doCalc()" style="width:100%; padding:12px; border-radius:12px; border:1px solid #ddd; font-family: inherit; cursor: pointer;">
+        <option value="toNew">قديم ← حديث (حذف صفرين)</option>
+        <option value="toOld">حديث ← قديم (إضافة صفرين)</option>
     </select>
 
     <div class="result-box">
@@ -96,12 +110,16 @@
     </div>
 
     <div class="social-links">
-        <a href="https://facebook.com/YOUR_PAGE" target="_blank" title="فيسبوك"><i class="fab fa-facebook"></i></a>
-        <a href="https://instagram.com/YOUR_USERNAME" target="_blank" title="انستغرام"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/1A7EZrNuM4/" target="_blank" title="فيسبوك">
+            <i class="fab fa-facebook"></i>
+        </a>
+        <a href="https://www.instagram.com/lens.calm?igsh=c3RlaXpxeWI3dHIy" target="_blank" title="انستغرام">
+            <i class="fab fa-instagram"></i>
+        </a>
     </div>
 
     <footer>
-        تصميم وتطوير <span style="font-weight:bold;"> المهندسة عشتار</span> &copy; 2025
+        تصميم وتطوير <span class="engineer">المهندسة عشتار</span> &copy; 2025
     </footer>
 </div>
 
@@ -115,7 +133,8 @@
         
         if (input && input > 0) {
             currentResult = (mode === 'toNew') ? input / 100 : input * 100;
-            resElem.innerText = Number(currentResult).toLocaleString('ar-EG'); // عرض الأرقام بالعربي
+            // عرض النتيجة بتنسيق الأرقام العربية
+            resElem.innerText = Number(currentResult).toLocaleString('ar-EG');
             if(navigator.vibrate) navigator.vibrate(10);
         } else {
             resElem.innerText = "0";
@@ -123,30 +142,30 @@
         }
     }
 
-    // وظيفة النطق الصوتي
     function speakResult() {
         if (currentResult === 0) return;
-
-        // تجهيز النص للنطق
         const textToSpeak = `${currentResult} ليرة سورية`;
-        
         const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'ar-SA'; // اللغة العربية
-        utterance.rate = 0.9;     // السرعة (هادئة قليلاً لتكون واضحة)
-        
-        // تشغيل الصوت
+        utterance.lang = 'ar-SA';
+        utterance.rate = 0.9;
+        window.speechSynthesis.cancel(); // إيقاف أي صوت سابق
         window.speechSynthesis.speak(utterance);
     }
 
     function scanImage(event) {
         const file = event.target.files[0];
         if(!file) return;
+        const btnIcon = document.querySelector('.btn-scan i');
+        btnIcon.className = "fas fa-spinner fa-spin";
+        
         Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
             const num = text.match(/\d+/);
             if(num) {
                 document.getElementById('userInput').value = num[0];
                 doCalc();
             }
+        }).finally(() => {
+            btnIcon.className = "fas fa-camera";
         });
     }
 </script>
