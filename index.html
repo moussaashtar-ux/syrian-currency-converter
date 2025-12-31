@@ -3,225 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>  |عشتار | المحول الذكي | الليرة السورية</title>
+    <title>محول عشتار الذكي</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script src='https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js'></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         body {
             font-family: 'Tajawal', sans-serif;
-            /* خلفية خضراء متدرجة ناعمة */
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            display: flex; justify-content: center; align-items: center; padding: 20px;
         }
-
-        /* الصندوق الزجاجي (Glassmorphism) */
         .main-card {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
             border-radius: 25px;
-            padding: 35px 25px;
-            width: 100%;
-            max-width: 400px;
+            padding: 30px 20px;
+            width: 100%; max-width: 400px;
             text-align: center;
-            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.1);
+            box-shadow: 0 15px 35px rgba(46, 125, 50, 0.15);
         }
-
-        h1 { color: #2e7d32; font-size: 24px; margin-bottom: 10px; }
-        p.subtitle { color: #558b63; font-size: 14px; margin-bottom: 25px; }
-
+        h1 { color: #2e7d32; margin-bottom: 20px; }
+        
         .input-area { position: relative; margin-bottom: 15px; }
-
-        input[type="text"] {
+        input[type="number"] {
             width: 100%;
-            padding: 18px 15px 18px 55px; /* مسافة لزر الكاميرا على اليسار */
-            font-size: 18px;
+            padding: 18px 15px 18px 55px;
+            font-size: 20px;
             border-radius: 15px;
             border: 2px solid #fff;
-            background: rgba(255, 255, 255, 0.9);
+            background: #fff;
             color: #1b3a24;
-            transition: 0.3s;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
             font-family: inherit;
         }
-
-        input:focus { outline: none; border-color: #66bb6a; box-shadow: 0 4px 15px rgba(102, 187, 106, 0.2); }
 
         .btn-scan {
-            position: absolute;
-            left: 10px;
-            top: 50%;
+            position: absolute; left: 10px; top: 50%;
             transform: translateY(-50%);
-            background: #e8f5e9;
-            color: #2e7d32;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .btn-scan:hover { background: #2e7d32; color: #fff; }
-
-        select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 12px;
-            border: 1px solid #ddd;
-            background: #fff;
-            margin-bottom: 20px;
-            font-family: inherit;
-            cursor: pointer;
+            background: #e8f5e9; color: #2e7d32;
+            border: none; width: 40px; height: 40px; border-radius: 12px; cursor: pointer;
         }
 
         .result-box {
-            background: rgba(46, 125, 50, 0.05);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 10px;
+            background: #fff; padding: 25px; border-radius: 15px;
+            margin: 20px 0; border: 1px solid #e8f5e9;
+            position: relative;
         }
+        #resultValue { font-size: 35px; font-weight: bold; color: #2e7d32; display: block; }
 
-        #resultValue {
-            font-size: 32px;
-            font-weight: bold;
-            color: #2e7d32;
-            display: block;
+        /* زر النطق */
+        .speak-btn {
+            background: #2e7d32; color: white; border: none;
+            padding: 10px 20px; border-radius: 50px;
+            cursor: pointer; margin-top: 10px; font-size: 14px;
+            transition: 0.3s; display: inline-flex; align-items: center; gap: 8px;
         }
+        .speak-btn:hover { background: #1b5e20; transform: scale(1.05); }
 
-        .interpreted { font-size: 12px; color: #777; margin-top: 5px; height: 15px; }
-
-        footer {
-            margin-top: 30px;
-            font-size: 13px;
-            color: #2e7d32;
-            border-top: 1px solid rgba(46, 125, 50, 0.1);
-            padding-top: 15px;
-        }
-
-        .brand { font-weight: bold; color: #1b5e20; }
-
-        /* أنيميشن بسيط عند التغيير */
-        .pop { animation: popAnim 0.3s ease; }
-        @keyframes popAnim {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        .social-links { margin-top: 20px; display: flex; justify-content: center; gap: 20px; }
+        .social-links a { color: #2e7d32; font-size: 24px; transition: 0.3s; }
+        footer { margin-top: 20px; font-size: 13px; color: #2e7d32; padding-top: 10px; border-top: 1px solid #ddd; }
     </style>
 </head>
 <body>
 
 <div class="main-card">
-    <h1><i class="fas fa-leaf"></i> محول العملة</h1>
-    <p class="subtitle">اكتب الرقم (أو كلمات) للتحويل الفوري</p>
+    <h1><i class="fas fa-leaf"></i> محول عشتار</h1>
 
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="مثال:15000 " autocomplete="off">
-        <button class="btn-scan" onclick="document.getElementById('fileIn').click()" title="مسح من صورة">
+        <input type="number" id="userInput" placeholder="أدخل المبلغ بالأرقام..." oninput="doCalc()">
+        <button class="btn-scan" onclick="document.getElementById('fileIn').click()">
             <i class="fas fa-camera"></i>
         </button>
         <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="scanImage(event)">
     </div>
 
-    <div class="interpreted" id="hint"></div>
-
-    <select id="mode" onchange="doCalc()">
+    <select id="mode" onchange="doCalc()" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd;">
         <option value="toNew">من قديم إلى حديث (حذف 00)</option>
         <option value="toOld">من حديث إلى قديم (إضافة 00)</option>
     </select>
 
     <div class="result-box">
         <span id="resultValue">0</span>
-        <small style="color: #558b63;">ليرة سورية</small>
+        <div style="font-size: 14px; color: #558b63; margin-bottom: 10px;">ليرة سورية</div>
+        
+        <button class="speak-btn" onclick="speakResult()">
+            <i class="fas fa-volume-up"></i> اسمع النطق بالعربية
+        </button>
+    </div>
+
+    <div class="social-links">
+        <a href="https://facebook.com/YOUR_PAGE" target="_blank" title="فيسبوك"><i class="fab fa-facebook"></i></a>
+        <a href="https://instagram.com/YOUR_USERNAME" target="_blank" title="انستغرام"><i class="fab fa-instagram"></i></a>
     </div>
 
     <footer>
-        تم التصميم والتطوير بواسطة <span class="brand"> المهندسة عشتار</span> &copy; 2025
+        تصميم وتطوير <span style="font-weight:bold;">عشتار</span> &copy; 2025
     </footer>
 </div>
 
 <script>
-    // قاموس بسيط للكلمات العربية
-    const words = {
-        'واحد':1, 'اثنان':2, 'اثنين':2, 'ثلاثة':3, 'اربعة':4, 'أربعة':4, 'خمسة':5, 'ستة':6, 'سبعة':7, 'ثمانية':8, 'تسعة':9, 'عشرة':10,
-        'عشرين':20, 'ثلاثين':30, 'اربعين':40, 'خمسين':50, 'ستين':60, 'سبعين':70, 'ثمانين':80, 'تسعين':90,
-        'مئة':100, 'مائة':100, 'مئتين':200, 'ألف':1000, 'الف':1000, 'آلاف':1000, 'مليون':1000000, 'نصف':0.5
-    };
-
-    function textToNumber(str) {
-        if (!isNaN(str.replace(/,/g,'')) && str.trim() !== "") return parseFloat(str.replace(/,/g,''));
-        
-        let total = 0, temp = 0;
-        let parts = str.replace(/و/g, " ").split(/\s+/);
-
-        parts.forEach(p => {
-            let n = words[p] || words[p.replace('ة','ه')];
-            if (n) {
-                if (n >= 1000) {
-                    total += (temp || 1) * n;
-                    temp = 0;
-                } else {
-                    temp += n;
-                }
-            } else if (!isNaN(p)) {
-                temp += parseFloat(p);
-            }
-        });
-        return total + temp;
-    }
+    let currentResult = 0;
 
     function doCalc() {
         const input = document.getElementById('userInput').value;
         const mode = document.getElementById('mode').value;
         const resElem = document.getElementById('resultValue');
-        const hintElem = document.getElementById('hint');
         
-        let num = textToNumber(input);
-
-        if (input && num > 0) {
-            hintElem.innerText = isNaN(input) ? "القيمة التقريبية: " + num.toLocaleString() : "";
-            let final = (mode === 'toNew') ? num / 100 : num * 100;
-            resElem.innerText = final.toLocaleString();
-            
-            // إضافة حركة واهتزاز
-            resElem.parentElement.classList.remove('pop');
-            void resElem.offsetWidth;
-            resElem.parentElement.classList.add('pop');
-            if(navigator.vibrate) navigator.vibrate(15);
+        if (input && input > 0) {
+            currentResult = (mode === 'toNew') ? input / 100 : input * 100;
+            resElem.innerText = Number(currentResult).toLocaleString('ar-EG'); // عرض الأرقام بالعربي
+            if(navigator.vibrate) navigator.vibrate(10);
         } else {
             resElem.innerText = "0";
-            hintElem.innerText = "";
+            currentResult = 0;
         }
     }
 
-    document.getElementById('userInput').addEventListener('input', doCalc);
+    // وظيفة النطق الصوتي
+    function speakResult() {
+        if (currentResult === 0) return;
+
+        // تجهيز النص للنطق
+        const textToSpeak = `${currentResult} ليرة سورية`;
+        
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'ar-SA'; // اللغة العربية
+        utterance.rate = 0.9;     // السرعة (هادئة قليلاً لتكون واضحة)
+        
+        // تشغيل الصوت
+        window.speechSynthesis.speak(utterance);
+    }
 
     function scanImage(event) {
         const file = event.target.files[0];
         if(!file) return;
-        const btn = document.querySelector('.btn-scan');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-        
         Tesseract.recognize(file, 'eng').then(({ data: { text } }) => {
             const num = text.match(/\d+/);
             if(num) {
                 document.getElementById('userInput').value = num[0];
                 doCalc();
             }
-        }).finally(() => {
-            btn.innerHTML = '<i class="fas fa-camera"></i>';
         });
     }
 </script>
